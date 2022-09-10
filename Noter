@@ -1,0 +1,25 @@
+#Noter.htb
+
+Noter was an Interesting Machine, That I've learned few of these things:
+  1. Search for the backend web technology and try to google for it's common exploit technique.
+  2. Flask Cookie Signing
+  3. Mysql Privilege Escalation using raptor_udf2.so
+  
+ Exploitation begins by creating an account and logging in. Once logged in we see the jwt token. Decode it, and we see the following structure:
+  {
+    "logged_in": true,
+    "username": <username>
+   }
+   
+Since it is using flask, we brute force secret used to sign these cookies, using flask-unsign
+
+Once we found the secret, we bruteforce the common usernames, by creating a new jwt tokens, and fuzzing this on headers, until we see 200 response.
+
+Then we get the username and password using which we ftp and found the admin password from the policy.
+
+Once obtaining the policy, we ftp and get the backups. 
+
+From the backups we can see that it is using vulnerable version of md-to-pdf, using which, we gain RCE
+
+We can see the credentials of mysqldb in the backups, so, after getting reverse shell, we login to mysql, and exploit mysql using techniques mentioned in
+https://medium.com/r3d-buck3t/privilege-escalation-with-mysql-user-defined-functions-996ef7d5ceaf
